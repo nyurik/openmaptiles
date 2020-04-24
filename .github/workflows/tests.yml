@@ -18,7 +18,9 @@ jobs:
         id: main
         run: |
           mkdir -p artifacts
-          echo "Hello\nworld\n" > artifacts/something.txt
+          env > artifacts/refs.txt
+          echo "GITHUB_SHA = $GITHUB_SHA" >> artifacts/refs.txt
+          echo "GITHUB_REF = $GITHUB_REF" >> artifacts/refs.txt
 
       - name: Save artifacts
         uses: actions/upload-artifact@v1
