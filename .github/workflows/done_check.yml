@@ -21,7 +21,7 @@ jobs:
           -H "authorization: Bearer $GITHUB_TOKEN" \
           -H "Accept: application/vnd.github.antiope-preview+json, application/vnd.github.v3+json" \
           -X GET \
-         "https://api.github.com/repos/$GITHUB_REPOSITORY/$1" > arts/$2
+         "https://api.github.com/repos/$GITHUB_REPOSITORY/$1" > "arts/$2"
          sleep 0.1
         }
         dwnl pull/4 pull_4
