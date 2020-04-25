@@ -60,12 +60,19 @@ jobs:
 
         export GITHUB_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
         export WORKFLOW_NAME="OpenMapTiles CI"
+        export CHECK_TIMEFRAME=$(expr 10000 "*" 60)  # in seconds
 
         WORKFLOW_ID=$(crl "$GITHUB_API/actions/workflows" \
-            | jq '.workflows[] | select(.name == "$WORKFLOW_NAME") | .id')
+            | jq ".workflows[] | select(.name == \"$WORKFLOW_NAME\") | .id")
         echo "WORKFLOW_NAME='$WORKFLOW_NAME' ==> WORKFLOW_ID=$WORKFLOW_ID"
 
-
+        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" \
+          jq ".workflow_runs \
+             | map({ id, status, conclusion, head_branch, head_sha, run_number, age: (now - (.updated_at|fromdate)) }) \
+             | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME)) \
+             | group_by(.head_branch) \
+             | map(sort_by(.age)|first)" \
+         > arts/results.json
 
 
     - name: Save artifacts
