@@ -30,9 +30,7 @@ jobs:
         }
 
         dwnl actions_runs_87709652_artifacts "actions/runs/87709652/artifacts"
-        dwnl actions_runs_87709652_cancel "actions/runs/87709652/cancel"
         dwnl actions_runs_87709652_jobs "actions/runs/87709652/jobs"
-        dwnl actions_runs_87709652_logs "actions/runs/87709652/logs" "-o arts/actions_runs_87709652_logs.zip"
         dwnl actions_workflows "actions/workflows"
         dwnl actions_workflows_1113692 "actions/workflows/1113692"
         dwnl actions_workflows_1113692_runs "actions/workflows/1113692/runs"
