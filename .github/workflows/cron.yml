@@ -60,7 +60,7 @@ jobs:
             | jq ".workflows[] | select(.name == \"$WORKFLOW_NAME\") | .id")
         echo "WORKFLOW_NAME='$WORKFLOW_NAME' ==> WORKFLOW_ID=$WORKFLOW_ID"
 
-        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" \
+        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" | \
           jq ".workflow_runs \
              | map({ id, status, conclusion, head_branch, head_sha, run_number, age: (now - (.updated_at|fromdate)) }) \
              | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME)) \
