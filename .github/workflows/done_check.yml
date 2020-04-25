@@ -16,41 +16,40 @@ jobs:
         set +e
         mkdir arts
         dwnl() {
-        echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$1  $3  > arts/$2.json"
-        echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$1  $3  > arts/$2.json\n\n\n" > "arts/$2.json"
+        echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$2  $3  > arts/$1.json"
+        echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$2  $3  > arts/$1.json\n\n\n" > "arts/$1.json"
         curl -s -L $3 \
           -H "authorization: Bearer $GITHUB_TOKEN" \
           -H "Accept: application/vnd.github.antiope-preview+json, application/vnd.github.v3+json" \
           -X GET \
-         "https://api.github.com/repos/$GITHUB_REPOSITORY/$1" >> "arts/$2.json"
+         "https://api.github.com/repos/$GITHUB_REPOSITORY/$2" >> "arts/$1.json"
          sleep 0.1
         }
 
-        dwnl "actions/artifacts" artifacts
-        dwnl "actions/artifacts/5030326" artifacts_5030326
-        dwnl "actions/artifacts/5030326/jobs" artifacts_5030326_jobs
-        dwnl "actions/artifacts/5030326/zip" artifacts_5030326_zip "-o arts/artifacts_5030326.zip"
-        
-        dwnl "actions/workflows" actions_workflows
-        dwnl "actions/workflows/1113692" actions_workflows_1113692
-        dwnl "actions/workflows/1113692/runs" actions_workflows_1113692_runs
-        dwnl "actions/workflows/1113692/runs?status=success&event=pull_request" workflows_1113692_filtered
+        dwnl actions_runs_87709652_artifacts "actions/runs/87709652/artifacts"
+        dwnl actions_runs_87709652_cancel "actions/runs/87709652/cancel"
+        dwnl actions_runs_87709652_jobs "actions/runs/87709652/jobs"
+        dwnl actions_runs_87709652_logs "actions/runs/87709652/logs" "-o arts/actions_runs_87709652_logs.zip"
+        dwnl actions_workflows "actions/workflows"
+        dwnl actions_workflows_1113692 "actions/workflows/1113692"
+        dwnl actions_workflows_1113692_runs "actions/workflows/1113692/runs"
+        dwnl artifacts "actions/artifacts"
+        dwnl artifacts_5030326 "actions/artifacts/5030326"
+        dwnl artifacts_5030326_jobs "actions/artifacts/5030326/jobs"
+        dwnl artifacts_5030326_zip "actions/artifacts/5030326/zip" "-o arts/artifacts_5030326.zip"
+        dwnl check "check-runs/616478729/annotations"-runs_616478729_annotations
+        dwnl check_suites_check_suite "check-suites/628168323"
+        dwnl commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check "commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs"-runs
+        dwnl issues_4_comments "issues/4/comments"
+        dwnl pulls "pulls"
+        dwnl pulls_4 "pulls/4"
+        dwnl pulls_4_comments "pulls/4/comments"
+        dwnl statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619 "statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619"
+        dwnl statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42 "statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42"
+        dwnl workflows_1113692_filtered "actions/workflows/1113692/runs?status=success&event=pull_request"
 
-        dwnl "actions/runs/87709652/jobs" actions_runs_87709652_jobs
-        dwnl "actions/runs/87709652/logs" actions_runs_87709652_logs "-o arts/actions_runs_87709652_logs.zip"
-        dwnl "check-suites/628168323" check_suites_check_suite
-        dwnl "actions/runs/87709652/artifacts" actions_runs_87709652_artifacts
-        dwnl "actions/runs/87709652/cancel" actions_runs_87709652_cancel
-        # dwnl "actions/runs/87709652/rerun" actions_runs_87709652_rerun
+        # dwnl actions_runs_87709652_rerun "actions/runs/87709652/rerun"
 
-        dwnl "check-runs/616478729/annotations" check-runs_616478729_annotations
-        dwnl "commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs" commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check-runs
-        dwnl "pulls" pulls
-        dwnl "pulls/4" pulls_4
-        dwnl "pulls/4/comments" pulls_4_comments
-        dwnl "issues/4/comments" issues_4_comments
-        dwnl "statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619" statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619
-        dwnl "statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42" statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42
 
     - name: Save artifacts
       uses: actions/upload-artifact@v1
