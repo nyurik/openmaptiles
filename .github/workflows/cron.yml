@@ -14,6 +14,10 @@ jobs:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       run: |
         set +e
+        export WORKFLOW_NAME="OpenMapTiles CI"
+        export CHECK_TIMEFRAME=$(expr 10000 "*" 60)  # in seconds
+        export GITHUB_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
+
         mkdir arts
         crl() {
           curl -s -L $2 \
@@ -23,9 +27,9 @@ jobs:
         }
 
         dwnl() {
-          echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$2  $3  > arts/$1.json"
-          echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$2  $3  > arts/$1.json\n\n\n" > "arts/$1.json"
-          crl "https://api.github.com/repos/$GITHUB_REPOSITORY/$2" $3 >> "arts/$1.json"
+          echo "Getting $GITHUB_API/$2 $3  > arts/$1.json"
+          echo "Getting $GITHUB_API/$2 $3  > arts/$1.json\n\n\n" > "arts/$1.json"
+          crl "$GITHUB_API/$2" $3 >> "arts/$1.json"
           sleep 0.1
         }
 
@@ -51,11 +55,6 @@ jobs:
 
         ####
         # steps needed
-        set -e
-
-        export GITHUB_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
-        export WORKFLOW_NAME="OpenMapTiles CI"
-        export CHECK_TIMEFRAME=$(expr 10000 "*" 60)  # in seconds
 
         WORKFLOW_ID=$(crl "$GITHUB_API/actions/workflows" \
             | jq ".workflows[] | select(.name == \"$WORKFLOW_NAME\") | .id")
