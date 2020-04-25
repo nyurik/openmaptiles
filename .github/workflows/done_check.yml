@@ -30,17 +30,18 @@ jobs:
         dwnl "actions/artifacts/5030326" artifacts_5030326
         dwnl "actions/artifacts/5030326/jobs" artifacts_5030326_jobs
         dwnl "actions/artifacts/5030326/zip" artifacts_5030326_zip "-o arts/artifacts_5030326.zip"
+        
         dwnl "actions/workflows" actions_workflows
         dwnl "actions/workflows/1113692" actions_workflows_1113692
         dwnl "actions/workflows/1113692/runs" actions_workflows_1113692_runs
         dwnl "actions/workflows/1113692/runs?status=success&event=pull_request" workflows_1113692_filtered
 
-        dwnl "actions/runs/87709652/jobs" jobs
-        dwnl "actions/runs/87709652/logs" logs
-        dwnl "check-suites/628168323" check_suite
-        dwnl "actions/runs/87709652/artifacts" artifacts
-        dwnl "actions/runs/87709652/cancel" cancel
-        dwnl "actions/runs/87709652/rerun" rerun
+        dwnl "actions/runs/87709652/jobs" actions_runs_87709652_jobs
+        dwnl "actions/runs/87709652/logs" actions_runs_87709652_logs "-o arts/actions_runs_87709652_logs.zip"
+        dwnl "check-suites/628168323" check_suites_check_suite
+        dwnl "actions/runs/87709652/artifacts" actions_runs_87709652_artifacts
+        dwnl "actions/runs/87709652/cancel" actions_runs_87709652_cancel
+        # dwnl "actions/runs/87709652/rerun" actions_runs_87709652_rerun
 
         dwnl "check-runs/616478729/annotations" check-runs_616478729_annotations
         dwnl "commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs" commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check-runs
