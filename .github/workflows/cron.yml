@@ -49,9 +49,6 @@ jobs:
         dwnl statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42 "statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42"
         dwnl workflows_1113692_filtered "actions/workflows/1113692/runs?status=success&event=pull_request"
 
-        # dwnl actions_runs_87709652_rerun "actions/runs/87709652/rerun"
-
-
         ####
         # steps needed
         set -e
@@ -71,7 +68,6 @@ jobs:
              | group_by(.head_branch) \
              | map(sort_by(.age)|first)" \
          > arts/results.json
-
 
     - name: Save artifacts
       uses: actions/upload-artifact@v1
