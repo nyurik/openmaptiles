@@ -42,7 +42,7 @@ jobs:
         dwnl "actions/workflows/1113692/runs?status=success&event=pull_request" workflows_1113692_filtered
         dwnl "check-runs/616478729/annotations" check-runs_616478729_annotations
         dwnl "commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs" commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check-runs
-        dwnl "pull/4" pull_4
+        dwnl "pull/408804952" pull_408804952
         dwnl "pulls" pulls
         dwnl "pulls/765/comments" pulls_765_comments
         dwnl "statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619" statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619
