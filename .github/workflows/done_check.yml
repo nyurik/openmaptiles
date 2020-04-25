@@ -1,14 +1,46 @@
-name: Check checker
+name: Cron
 
 on:
-  check_run:
-  check_suite:
-    
+  schedule:
+  - cron: '*/1 * * * *'
+        
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Tester
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       run: |
-        env
+        set +e
+        dwnl() {
+        echo "Getting https://api.github.com/repos/$GITHUB_REPOSITORY/$1  $3  > arts/$2"
+        curl -s -L $3 \
+          -H "authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github.antiope-preview+json, application/vnd.github.v3+json" \
+          -X GET \
+         "https://api.github.com/repos/$GITHUB_REPOSITORY/$1" > arts/$2
+         sleep 0.1
+        }
+        dwnl pull/4 pull_4
+        dwnl pulls pulls
+        dwnl pulls/765/comments pulls_765_comments
+        dwnl actions/artifacts artifacts
+        dwnl actions/artifacts/5030326 artifacts_5030326
+        dwnl actions/artifacts/5030326/jobs artifacts_5030326_jobs
+        dwnl actions/artifacts/5030326/zip artifacts_5030326_zip "-o arts/artifacts_5030326.zip"
+        dwnl actions/artifacts/616478729 artifacts_616478729
+        dwnl actions/artifacts/616478729/jobs artifacts_616478729_jobs
+        dwnl actions/artifacts/616478729/zip artifacts_616478729_zip "-o arts/artifacts_616478729.zip"
+        dwnl actions/artifacts/87202380 artifacts_87202380
+        dwnl actions/artifacts/87202380/jobs artifacts_87202380_jobs
+        dwnl actions/artifacts/87202380/zip artifacts_87202380_zip "-o arts/artifacts_87202380.zip"
+        dwnl actions/workflows actions_workflows
+        dwnl actions/workflows/1113692 actions_workflows_1113692
+        dwnl actions/workflows/1113692/runs actions_workflows_1113692_runs
+        dwnl actions/workflows/1113692/runs?status=success&event=pull_request workflows_1113692_filtered
+        dwnl check-runs/616478729/annotations check-runs_616478729_annotations
+        dwnl commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check-runs
+        dwnl statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619 statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619
+        dwnl statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42 statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42
