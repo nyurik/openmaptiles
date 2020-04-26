@@ -97,7 +97,10 @@ jobs:
             | select(.!=null)
           ")
 
-        # crl "$ARTIFACT_URL" | unzip
+        # Assume zip file contains just one file
+        MESSAGE=$(crl "$ARTIFACT_URL" | gunzip)
+        
+        echo "$MESSAGE" > arts/message.txt
                                                                                                                                                            - name: Save artifacts
     - name: Save artifacts
       uses: actions/upload-artifact@v1
