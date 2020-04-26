@@ -7,11 +7,11 @@ on:
     - cron: '*/5 * * * *'
 
 jobs:
-  build:
+  "Update PRs":
     runs-on: ubuntu-latest
 
     steps:
-      - name: Tester
+      - name: main
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           WORKFLOW_NAME: "OpenMapTiles CI"
@@ -19,7 +19,7 @@ jobs:
           MSG_ARTIFACT_NAME: "pr_message"
           # How far back to look for finished runs, in minutes.
           # This value should be about 5 minutes more than the cron's job frequency above.
-          JOBS_TIMEFRAME: 10000
+          JOBS_TIMEFRAME: 10
         run: |
           #
           # Strategy:
