@@ -101,7 +101,7 @@ jobs:
         MESSAGE=$(crl "$ARTIFACT_URL" | gunzip)
         
         echo "$MESSAGE" > arts/message.txt
-                                                                                                                                                           - name: Save artifacts
+
     - name: Save artifacts
       uses: actions/upload-artifact@v1
       with:
