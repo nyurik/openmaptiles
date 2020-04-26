@@ -18,6 +18,7 @@ jobs:
         id: main
         run: |
           mkdir -p artifacts
+          ENV_VARS="$(env | sort)"
           cat > artifacts/message.md <<EOF
           # Test Message
 
@@ -25,7 +26,7 @@ jobs:
           <summary>PR to merge $GITHUB_HEAD_REF $GITHUB_SHA -> $GITHUB_BASE_REF</summary>
 
           ```
-          $(env | sort)
+          $ENV_VARS
           ```
 
           </details>
