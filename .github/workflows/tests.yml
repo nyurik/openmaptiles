@@ -18,19 +18,21 @@ jobs:
         id: main
         run: |
           mkdir -p artifacts
-          env > artifacts/refs.txt
-          echo "GITHUB_SHA = $GITHUB_SHA" >> artifacts/refs.txt
-          echo "GITHUB_REF = $GITHUB_REF" >> artifacts/refs.txt
-          
-          set +e
-          set -x
-          docker images
-          docker ps -a
+          cat > artifacts/message.md <<EOF
+          # Test Message
 
-      - uses: marocchino/sticky-pull-request-comment@master
-        if: "0"
+          <details>
+          <summary>PR to merge $GITHUB_HEAD_REF $GITHUB_SHA -> $GITHUB_BASE_REF</summary>
+
+          ```
+          $(env | sort)
+          ```
+
+          </details>
+          EOF
+
       - name: Save artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: results
+          name: pr_message
           path: artifacts
