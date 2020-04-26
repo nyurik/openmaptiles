@@ -15,6 +15,7 @@ jobs:
       run: |
         set +e
         export WORKFLOW_NAME="OpenMapTiles CI"
+        export ARTIFACT_NAME="results"
         export CHECK_TIMEFRAME=$(expr 10000 "*" 60)  # in seconds
         export GITHUB_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
 
@@ -58,10 +59,11 @@ jobs:
 
         ####
         # steps needed
+        set -x
 
         WORKFLOW_ID=$(crl "$GITHUB_API/actions/workflows" \
             | jq ".workflows[] | select(.name == \"$WORKFLOW_NAME\") | .id")
-        echo "WORKFLOW_NAME='$WORKFLOW_NAME' ==> WORKFLOW_ID=$WORKFLOW_ID"
+        echo "WORKFLOW_NAME='$WORKFLOW_NAME' ==> WORKFLOW_ID=${WORKFLOW_ID}"
 
         crl "$GITHUB_API/actions/runs?status=success&event=pull_request" \
           | jq ".workflow_runs
@@ -70,14 +72,14 @@ jobs:
             | map({ id, head_branch, head_sha, run_number, src_repo: .head_repository.full_name, age })
           " > arts/res_runs.json
 
-        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" \
+        crl "$GITHUB_API/actions/workflows/${WORKFLOW_ID}/runs?status=success&event=pull_request" \
           | jq ".workflow_runs
             | map(. += { age: (now - (.updated_at|fromdate)) })
             | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME))
-            | map({ id, head_branch, head_sha, run_number, src_repo: .head_repository.full_name, age })
+            | map({ id, artifacts_url, head_branch, head_sha, run_number, src_repo: .head_repository.full_name, age })
             | group_by(.head_branch)
             | map(sort_by(.age)|first)
-          " > arts/res_workflow_$WORKFLOW_ID_runs.json
+          " > arts/res_workflow_${WORKFLOW_ID}_runs.json
 
         crl "$GITHUB_API/pulls?state=open&sort=updated" \
           | jq "map({updated_at,
@@ -85,6 +87,17 @@ jobs:
               head_user_login: .head.user.login, head_repo_fname: .head.repo.full_name})
           " > arts/res_pulls.json
 
+        RUN_ID=87202380
+
+        ARTIFACT_URL=$(crl "$GITHUB_API/actions/runs/$RUN_ID/artifacts" \
+          | jq -r ".artifacts
+            | map(select(.name == \"$ARTIFACT_NAME\" and .expired == false))
+            | first
+            | .archive_download_url
+            | select(.!=null)
+          ")
+
+        # crl "$ARTIFACT_URL" | unzip
                                                                                                                                                            - name: Save artifacts
     - name: Save artifacts
       uses: actions/upload-artifact@v1
