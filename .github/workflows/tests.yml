@@ -21,6 +21,9 @@ jobs:
           env > artifacts/refs.txt
           echo "GITHUB_SHA = $GITHUB_SHA" >> artifacts/refs.txt
           echo "GITHUB_REF = $GITHUB_REF" >> artifacts/refs.txt
+          
+          set +e
+          docker pull marocchino/sticky-pull-request-comment@v1
 
       - name: Save artifacts
         uses: actions/upload-artifact@v1
