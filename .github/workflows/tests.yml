@@ -24,6 +24,7 @@ jobs:
           
           set +e
           set -x
+          docker images -a
           docker pull marocchino/sticky-pull-request-comment:v1
 
       - name: Save artifacts
