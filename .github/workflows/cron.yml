@@ -22,36 +22,39 @@ jobs:
         crl() {
           curl -s -L $2 \
             -H "Accept: application/vnd.github.antiope-preview+json, application/vnd.github.v3+json" \
+            -H "authorization: Bearer $GITHUB_TOKEN" \
             -X GET \
            "$1"
         }
 
         dwnl() {
-          echo "Getting $GITHUB_API/$2 $3  > arts/$1.json"
-          echo "Getting $GITHUB_API/$2 $3  > arts/$1.json\n\n\n" > "arts/$1.json"
-          crl "$GITHUB_API/$2" $3 >> "arts/$1.json"
+          echo "Getting $2 $3  > arts/$1.json"
+          echo "Getting $2 $3  > arts/$1.json\n\n\n" > "arts/$1.json"
+          crl "$2" $3 >> "arts/$1.json"
           sleep 0.1
         }
 
-        dwnl actions_runs_87709652_artifacts "actions/runs/87709652/artifacts"
-        dwnl actions_runs_87709652_jobs "actions/runs/87709652/jobs"
-        dwnl actions_workflows "actions/workflows"
-        dwnl actions_workflows_1113692 "actions/workflows/1113692"
-        dwnl actions_workflows_1113692_runs "actions/workflows/1113692/runs"
-        dwnl artifacts "actions/artifacts"
-        dwnl artifacts_5030326 "actions/artifacts/5030326"
-        dwnl artifacts_5030326_jobs "actions/artifacts/5030326/jobs"
-        dwnl artifacts_5030326_zip "actions/artifacts/5030326/zip" "-o arts/artifacts_5030326.zip"
-        dwnl check "check-runs/616478729/annotations"-runs_616478729_annotations
-        dwnl check_suites_check_suite "check-suites/628168323"
-        dwnl commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check "commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs"-runs
-        dwnl issues_4_comments "issues/4/comments"
-        dwnl pulls "pulls"
-        dwnl pulls_4 "pulls/4"
-        dwnl pulls_4_comments "pulls/4/comments"
-        dwnl statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619 "statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619"
-        dwnl statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42 "statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42"
-        dwnl workflows_1113692_filtered "actions/workflows/1113692/runs?status=success&event=pull_request"
+        dwnl actions_runs "$GITHUB_API/actions/runs"
+        dwnl actions_runs_filtered "$GITHUB_API/actions/runs?status=success&event=pull_request"
+        dwnl actions_runs_87709652_artifacts "$GITHUB_API/actions/runs/87709652/artifacts"
+        dwnl actions_runs_87709652_jobs "$GITHUB_API/actions/runs/87709652/jobs"
+        dwnl actions_workflows "$GITHUB_API/actions/workflows"
+        dwnl actions_workflows_1113692 "$GITHUB_API/actions/workflows/1113692"
+        dwnl actions_workflows_1113692_runs "$GITHUB_API/actions/workflows/1113692/runs"
+        dwnl artifacts "$GITHUB_API/actions/artifacts"
+        dwnl artifacts_5030326 "$GITHUB_API/actions/artifacts/5030326"
+        dwnl artifacts_5030326_jobs "$GITHUB_API/actions/artifacts/5030326/jobs"
+        dwnl artifacts_5030326_zip "$GITHUB_API/actions/artifacts/5030326/zip" "-o arts/artifacts_5030326.zip"
+        dwnl check "$GITHUB_API/check-runs/616478729/annotations"-runs_616478729_annotations
+        dwnl check_suites_check_suite "$GITHUB_API/check-suites/628168323"
+        dwnl commits_90f0d48ac84f1369729c1e3c9129dbdd599aec42_check "$GITHUB_API/commits/90f0d48ac84f1369729c1e3c9129dbdd599aec42/check-runs"-runs
+        dwnl issues_4_comments "$GITHUB_API/issues/4/comments"
+        dwnl pulls "$GITHUB_API/pulls"
+        dwnl pulls_4 "$GITHUB_API/pulls/4"
+        dwnl pulls_4_comments "$GITHUB_API/pulls/4/comments"
+        dwnl statuses_85555cf4a41c43bb4c62429b6ac12aa911c90619 "$GITHUB_API/statuses/85555cf4a41c43bb4c62429b6ac12aa911c90619"
+        dwnl statuses_90f0d48ac84f1369729c1e3c9129dbdd599aec42 "$GITHUB_API/statuses/90f0d48ac84f1369729c1e3c9129dbdd599aec42"
+        dwnl workflows_1113692_filtered "$GITHUB_API/actions/workflows/1113692/runs?status=success&event=pull_request"
 
         ####
         # steps needed
@@ -60,14 +63,29 @@ jobs:
             | jq ".workflows[] | select(.name == \"$WORKFLOW_NAME\") | .id")
         echo "WORKFLOW_NAME='$WORKFLOW_NAME' ==> WORKFLOW_ID=$WORKFLOW_ID"
 
-        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" | \
-          jq ".workflow_runs \
-             | map({ id, status, conclusion, head_branch, head_sha, run_number, age: (now - (.updated_at|fromdate)) }) \
-             | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME)) \
-             | group_by(.head_branch) \
-             | map(sort_by(.age)|first)" \
-         > arts/results.json
+        crl "$GITHUB_API/actions/runs?status=success&event=pull_request" \
+          | jq ".workflow_runs
+            | map(. += { age: (now - (.updated_at|fromdate)) })
+            | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME))
+            | map({ id, head_branch, head_sha, run_number, src_repo: .head_repository.full_name, age })
+          " > arts/res_runs.json
 
+        crl "$GITHUB_API/actions/workflows/$WORKFLOW_ID/runs?status=success&event=pull_request" \
+          | jq ".workflow_runs
+            | map(. += { age: (now - (.updated_at|fromdate)) })
+            | map(select(.status==\"completed\" and .conclusion==\"success\" and .age < $CHECK_TIMEFRAME))
+            | map({ id, head_branch, head_sha, run_number, src_repo: .head_repository.full_name, age })
+            | group_by(.head_branch)
+            | map(sort_by(.age)|first)
+          " > arts/res_workflow_$WORKFLOW_ID_runs.json
+
+        crl "$GITHUB_API/pulls?state=open&sort=updated" \
+          | jq "map({updated_at,
+              head_sha: .head.sha, head_label: .head.label, head_ref: .head.ref,
+              head_user_login: .head.user.login, head_repo_fname: .head.repo.full_name})
+          " > arts/res_pulls.json
+
+                                                                                                                                                           - name: Save artifacts
     - name: Save artifacts
       uses: actions/upload-artifact@v1
       with:
