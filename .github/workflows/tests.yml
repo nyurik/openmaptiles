@@ -27,6 +27,8 @@ jobs:
           docker images
           docker ps -a
 
+      - uses: marocchino/sticky-pull-request-comment@master
+        if: "0"
       - name: Save artifacts
         uses: actions/upload-artifact@v1
         with:
