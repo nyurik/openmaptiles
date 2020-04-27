@@ -1,4 +1,4 @@
-name: Update PRs from workflow
+name: Update PRs comments
 
 on:
   # This number should correspond to the JOBS_TIMEFRAME value below.
