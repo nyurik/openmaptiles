@@ -36,7 +36,7 @@ jobs:
           # Recompute time frame to be in seconds, and set a few more useful constants
           export CHECK_TIMEFRAME="$(expr "$JOBS_TIMEFRAME" "*" 60)"
           export GITHUB_API="https://api.github.com/repos/$GITHUB_REPOSITORY"
-          export COMMENT_MAGIC_HEADER='<!--'" Do not edit. This comment will be automatically updated from workflow '$WORKFLOW_NAME' artifact '$ARTIFACT_NAME' -->"
+          export COMMENT_MAGIC_HEADER='<!--'" Do not edit. This comment will be auto-updated with artifact '$MSG_ARTIFACT_NAME' created by action '$WORKFLOW_NAME' -->"
 
           # A useful wrapper around CURL
           crl() {
