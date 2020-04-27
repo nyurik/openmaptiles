@@ -32,7 +32,7 @@ jobs:
           </details>
           EOF
 
-      - name: Save artifacts
+      - name: Save PR message as artifact
         uses: actions/upload-artifact@v1
         with:
           name: pr_message
